@@ -16,15 +16,15 @@ type Block struct {
 	prevHash  []byte
 
 	// Computed data
-	rnd       uint64
-	hash      []byte
+	rnd  uint64
+	hash []byte
 }
 
 const ZerosAmount = 3
 
 var GenesisBlock = Block{
-	index: 0,
-	data: []byte{},
+	index:     0,
+	data:      []byte{},
 	timestamp: 1597266000000000, // 2020-08-13T00:00:00
 	prevHash: []byte{
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -65,8 +65,12 @@ func (block *Block) CalcTempHash(rnd uint64) [32]byte {
 	return sha256.Sum256(serializedBlock)
 }
 
+func (block *Block) CalcHash() [32]byte {
+	return block.CalcTempHash(block.rnd)
+}
+
 func (block *Block) Mine() {
-	for  {
+	for {
 		rnd := rand.Uint64()
 		hash := block.CalcTempHash(rnd)
 
@@ -79,6 +83,12 @@ func (block *Block) Mine() {
 	}
 }
 
+func (block *Block) IsValid() bool {
+	actualHash := block.CalcHash()
+
+	return bytes.Compare(actualHash[:], block.hash) == 0
+}
+
 func main() {
 	GenesisBlock.Mine()
 
@@ -87,4 +97,5 @@ func main() {
 	}
 	fmt.Println()
 	fmt.Println(GenesisBlock.rnd)
+	fmt.Println(GenesisBlock.IsValid())
 }
