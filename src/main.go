@@ -2,11 +2,15 @@ package main
 
 import (
 	"bytes"
+	"container/list"
 	"crypto/sha256"
 	"fmt"
 	"math/rand"
 	"strconv"
+	"time"
 )
+
+const ZerosAmount = 3
 
 type Block struct {
 	// Static data
@@ -19,8 +23,6 @@ type Block struct {
 	rnd  uint64
 	hash []byte
 }
-
-const ZerosAmount = 3
 
 var GenesisBlock = Block{
 	index:     0,
@@ -89,13 +91,81 @@ func (block *Block) IsValid() bool {
 	return bytes.Compare(actualHash[:], block.hash) == 0
 }
 
-func main() {
-	GenesisBlock.Mine()
+type BlockChain struct {
+	list *list.List
+}
 
-	for _, n := range GenesisBlock.hash {
-		fmt.Printf("%02x", n)
+func NewBlockChain() *BlockChain {
+	chain := BlockChain{
+		list: list.New(),
+	}
+
+	chain.list.PushBack(&GenesisBlock)
+
+	return &chain
+}
+
+func (chain *BlockChain) AddBlock(data []byte) *Block {
+	prevBlock := chain.list.Back().Value.(*Block)
+	timestamp := time.Now().UnixNano()
+
+	block := Block{
+		index:     prevBlock.index + 1,
+		data:      data,
+		timestamp: timestamp,
+		prevHash:  prevBlock.hash,
+	}
+
+	block.Mine()
+	chain.list.PushBack(&block)
+
+	return &block
+}
+
+func (chain *BlockChain) IsValid() bool {
+	var prevBlock *Block
+
+	for e := chain.list.Front(); e != nil; e = e.Next() {
+		block := e.Value.(*Block)
+
+		if prevBlock != nil {
+			if !block.IsValid() || bytes.Compare(block.prevHash, prevBlock.hash) != 0 {
+				return false
+			}
+		} else if block != &GenesisBlock {
+			return false
+		}
+
+		prevBlock = block
+	}
+
+	return true
+}
+
+func main() {
+	blockchain := NewBlockChain()
+	blockchain.AddBlock([]byte{})
+	blockchain.AddBlock([]byte{})
+	blockchain.AddBlock([]byte{})
+
+	fmt.Println()
+	for e := blockchain.list.Front(); e != nil; e = e.Next() {
+		block := e.Value.(*Block)
+
+		fmt.Printf("Index: %d\n", block.index)
+		fmt.Printf("Rnd: %d\n", block.rnd)
+		fmt.Print("PrevHash: ")
+		for _, n := range block.prevHash {
+			fmt.Printf("%02x", n)
+		}
+		fmt.Println()
+		fmt.Print("Hash: ")
+		for _, n := range block.hash {
+			fmt.Printf("%02x", n)
+		}
+		fmt.Println()
 	}
 	fmt.Println()
-	fmt.Println(GenesisBlock.rnd)
-	fmt.Println(GenesisBlock.IsValid())
+
+	fmt.Printf("Is blockchain valid? %t\n", blockchain.IsValid())
 }
