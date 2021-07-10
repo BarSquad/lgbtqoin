@@ -19,5 +19,5 @@ jobs:
         go-version: 1.16
 
     - name: Test
-    - run: cd /src/rpchandlers
+      run: cd /src/rpchandlers
     - run: go test -v ./...
