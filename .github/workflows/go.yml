@@ -12,13 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
         go-version: 1.16
 
-    - name: Test
-      run: cd src/rpchandlers
-    - run: go build ./...
-    - run: go test -v ./...
+    - name: Build
+      working-directory: ./src/rpchandlers
+      run: go build ./...
+    - name: RunTests
+      working-directory: ./src/rpchandlers
+      run: go test -v ./...
