@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "github.com/BarSquad/lgbtqoin/tree/master/src/rpchandlers/proto"
+	pb "github.com/BarSquad/lgbtqoin/src/rpchandlers/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
