@@ -1,4 +1,4 @@
-package main
+package rpchandlers
 
 import (
 	"net"
@@ -19,15 +19,15 @@ func main() {
 	var opts []grpc.ServerOption
 	grpcServer := grpc.NewServer(opts...)
 
-	pb.RegisterReverseServer(grpcServer, &server{})
+	pb.RegisterReverseServer(grpcServer, &RPCServer{})
 	grpcServer.Serve(listener)
 }
 
-type server struct {
+type RPCServer struct {
 	pb.UnimplementedReverseServer
 }
 
-func (s *server) Do(c context.Context, request *pb.Request) (response *pb.Response, err error) {
+func (s *RPCServer) Do(c context.Context, request *pb.Request) (response *pb.Response, err error) {
 	n := 0
 	// Сreate an array of runes to safely reverse a string.
 	runes := make([]rune, len(request.Message))
