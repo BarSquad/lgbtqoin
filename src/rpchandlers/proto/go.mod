@@ -1,4 +1,4 @@
-module github.com/BarSquad/lgbtqoin/tree/master/src/rpchandlers/proto
+module github.com/BarSquad/lgbtqoin/src/rpchandlers/proto
 
 go 1.16
 
