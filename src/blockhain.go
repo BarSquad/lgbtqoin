@@ -5,12 +5,13 @@ import (
 	"container/list"
 	"crypto/sha256"
 	"fmt"
+	"github.com/ccding/go-stun/stun"
 	"math/rand"
 	"strconv"
 	"time"
 )
 
-const ZerosAmount = 3
+const ZerosAmount = 1
 
 type Block struct {
 	// Static data
@@ -168,4 +169,10 @@ func main() {
 	fmt.Println()
 
 	fmt.Printf("Is blockchain valid? %t\n", blockchain.IsValid())
+	_, host, err := stun.NewClient().Discover()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(host.String(), err)
+	}
 }
