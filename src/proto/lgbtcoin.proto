@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package lgbtcoin;
+option go_package = "./lgbtcoin";
+service Reverse {
+  rpc Do(Request) returns (Response) {}
+}
+
+message Request {
+  string message = 1;
+}
+
+message Response {
+  string message = 1;
+}
