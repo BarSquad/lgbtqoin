@@ -1,9 +1,10 @@
 package main
 
 import (
-	pb "./proto"
 	"context"
 	"fmt"
+
+	pb "github.com/BarSquad/lgbtqoin/src/rpchandlers/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
 )
